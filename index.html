@@ -7,11 +7,7 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -28,28 +24,71 @@
       position: relative;
     }
 
-    /* Soft ambient blobs */
+    /* Floating particles */
+    .particle {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      animation: floatParticle linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatParticle {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.4; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    /* Blobs */
     body::before, body::after {
       content: '';
-      position: absolute;
+      position: fixed;
       border-radius: 50%;
       filter: blur(110px);
       opacity: 0.35;
       z-index: 0;
+      animation: blobDrift 10s ease-in-out infinite alternate;
     }
     body::before {
-      width: 500px;
-      height: 500px;
+      width: 500px; height: 500px;
       background: #52c99a;
-      top: -120px;
-      left: -160px;
+      top: -120px; left: -160px;
     }
     body::after {
-      width: 420px;
-      height: 420px;
+      width: 420px; height: 420px;
       background: #a0f0cf;
-      bottom: -90px;
-      right: -110px;
+      bottom: -90px; right: -110px;
+      animation-delay: -5s;
+    }
+
+    @keyframes blobDrift {
+      0%   { transform: translate(0,0) scale(1); }
+      100% { transform: translate(30px,20px) scale(1.08); }
+    }
+
+    /* Load animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      0%   { opacity: 0; transform: scale(0.85); }
+      70%  { transform: scale(1.04); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(44, 200, 138, 0.4); }
+      50%       { box-shadow: 0 0 0 10px rgba(44, 200, 138, 0); }
+    }
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-5px); }
     }
 
     .container {
@@ -69,6 +108,7 @@
       text-transform: uppercase;
       color: #1a5c42;
       margin-bottom: 1.75rem;
+      animation: fadeUp 0.7s ease both, floatBadge 4s ease-in-out 1s infinite;
     }
 
     h1 {
@@ -78,13 +118,16 @@
       letter-spacing: -0.02em;
       margin-bottom: 1.25rem;
       color: #0f3d2b;
+      animation: fadeUp 0.7s ease 0.15s both;
     }
 
     h1 span {
-      background: linear-gradient(135deg, #1a8c5e, #2dc98a, #0fa86e);
+      background: linear-gradient(90deg, #1a8c5e, #2dc98a, #0fa86e, #2dc98a, #1a8c5e);
+      background-size: 400px auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      animation: shimmer 4s linear 1.2s infinite;
     }
 
     .tagline {
@@ -93,6 +136,7 @@
       color: #2d6b50;
       line-height: 1.7;
       margin-bottom: 2.5rem;
+      animation: fadeUp 0.7s ease 0.3s both;
     }
 
     .topics {
@@ -107,33 +151,177 @@
       background: rgba(255,255,255,0.5);
       border: 1px solid rgba(255,255,255,0.8);
       border-radius: 50px;
-      padding: 0.4rem 1rem;
-      font-size: 0.85rem;
+      padding: 0.45rem 1.2rem;
+      font-size: 0.88rem;
+      font-weight: 500;
       color: #1a4d38;
       display: flex;
       align-items: center;
       gap: 0.4rem;
       backdrop-filter: blur(6px);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      animation: popIn 0.5s ease both;
+      position: relative;
+      overflow: hidden;
     }
 
-    .topic-pill .icon {
-      font-size: 1rem;
+    /* Ripple shimmer on pill hover */
+    .topic-pill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transform: translateX(-100%);
+      transition: transform 0s;
+    }
+    .topic-pill:hover::after {
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
     }
 
+    .topic-pill:nth-child(1) { animation-delay: 0.45s; }
+    .topic-pill:nth-child(2) { animation-delay: 0.55s; }
+    .topic-pill:nth-child(3) { animation-delay: 0.65s; }
+    .topic-pill:nth-child(4) { animation-delay: 0.75s; }
+
+    .topic-pill:hover {
+      background: rgba(255,255,255,0.78);
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 10px 28px rgba(30,120,80,0.18);
+      animation: pulse 1.5s ease infinite;
+    }
+
+    .topic-pill .icon { font-size: 1.1rem; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,40,25,0.45);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: linear-gradient(145deg, #e8faf2, #f4fdf9);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 24px;
+      padding: 2.5rem 2.5rem 2rem;
+      max-width: 440px;
+      width: 90%;
+      box-shadow: 0 24px 70px rgba(20,90,55,0.22);
+      transform: scale(0.88) translateY(16px);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+      opacity: 0;
+      text-align: center;
+    }
+    .modal-overlay.active .modal {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    .modal-icon {
+      font-size: 3rem;
+      margin-bottom: 0.6rem;
+      display: block;
+      animation: none;
+    }
+    .modal-overlay.active .modal-icon {
+      animation: popIn 0.5s ease 0.2s both;
+    }
+
+    .modal h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0f3d2b;
+      margin-bottom: 0.75rem;
+    }
+
+    .modal p {
+      font-size: 0.93rem;
+      color: #3a7a5c;
+      line-height: 1.7;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal .coming-tag {
+      display: inline-block;
+      background: rgba(44,201,138,0.15);
+      border: 1px solid rgba(44,201,138,0.35);
+      border-radius: 50px;
+      padding: 0.25rem 0.85rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #1a6648;
+      margin-bottom: 1.4rem;
+    }
+
+    .modal-features {
+      list-style: none;
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+    .modal-features li {
+      font-size: 0.88rem;
+      color: #2d6b50;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(44,201,138,0.12);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .modal-features li:last-child { border-bottom: none; }
+    .modal-features li .feat-icon { font-size: 1rem; }
+
+    .modal-close {
+      background: linear-gradient(135deg, #2dc98a, #1a8c5e);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.65rem 1.8rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(26,140,94,0.3);
+    }
+    .modal-close:hover { opacity: 0.88; transform: scale(1.04); }
+
+    /* Footer */
     .footer-note {
       margin-top: 1rem;
       font-size: 0.75rem;
       color: #3a7a5c;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
+      line-height: 1.8;
+      animation: fadeUp 0.7s ease 0.85s both;
     }
-
     .footer-note a {
-      color: #2d6b50;
+      color: #1a6648;
       text-decoration: none;
+      border-bottom: 1px solid rgba(26,102,72,0.3);
+      transition: border-color 0.2s, color 0.2s;
     }
+    .footer-note a:hover { color: #0f3d2b; border-color: #0f3d2b; }
   </style>
 </head>
 <body>
+
+  <!-- Floating particles injected by JS -->
+
   <div class="container">
     <div class="badge">🧠 Coming Soon</div>
 
@@ -146,15 +334,125 @@
     </p>
 
     <div class="topics">
-      <div class="topic-pill"><span class="icon">🎬</span> Film Therapy</div>
-      <div class="topic-pill"><span class="icon">🎵</span> Music Therapy</div>
-      <div class="topic-pill"><span class="icon">🎨</span> Art Therapy</div>
-      <div class="topic-pill"><span class="icon">✍️</span> Writing Therapy</div>
+      <div class="topic-pill" onclick="openModal('film')"><span class="icon">🎬</span> Film Therapy</div>
+      <div class="topic-pill" onclick="openModal('music')"><span class="icon">🎵</span> Music Therapy</div>
+      <div class="topic-pill" onclick="openModal('art')"><span class="icon">🎨</span> Art Therapy</div>
+      <div class="topic-pill" onclick="openModal('writing')"><span class="icon">✍️</span> Writing Therapy</div>
     </div>
 
     <p class="footer-note">
-      &copy; 2026 <a href="https://trybrainbreak.com">trybrainbreak.com</a> — All rights reserved.
+      &copy; 2026 Brain Break &mdash; Andrew Davis, Alabama Student.<br>
+      Made with ♥ in 🇺🇸 by <a href="https://github.com/colinlee05" target="_blank" rel="noopener">Colin Lee</a> &amp; Andrew Davis.
     </p>
   </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal" id="modal">
+      <span class="modal-icon" id="modal-icon"></span>
+      <h2 id="modal-title"></h2>
+      <span class="coming-tag">Coming Soon</span>
+      <p id="modal-body"></p>
+      <ul class="modal-features" id="modal-features"></ul>
+      <button class="modal-close" onclick="closeModal()">Got it</button>
+    </div>
+  </div>
+
+  <script>
+    const content = {
+      film: {
+        icon: '🎬',
+        title: 'Film Therapy',
+        body: 'Explore how cinema can be a powerful therapeutic tool — from tearjerkers that release emotion to uplifting stories that inspire change.',
+        features: [
+          { icon: '🎞️', text: 'Guides on how film therapy is practiced' },
+          { icon: '😊', text: 'Curated clips proven to spark positive emotions' },
+          { icon: '📖', text: 'Resources for therapists and individuals alike' },
+          { icon: '🔬', text: 'The science behind why movies move us' },
+        ]
+      },
+      music: {
+        icon: '🎵',
+        title: 'Music Therapy',
+        body: 'Discover how rhythm, melody, and sound can regulate mood, reduce anxiety, and create deep emotional connections.',
+        features: [
+          { icon: '🎧', text: 'Playlists shown to reduce stress and boost mood' },
+          { icon: '🧠', text: 'How music affects the brain and nervous system' },
+          { icon: '🎼', text: 'Active vs. receptive music therapy explained' },
+          { icon: '📋', text: 'Step-by-step guides to get started at home' },
+        ]
+      },
+      art: {
+        icon: '🎨',
+        title: 'Art Therapy',
+        body: 'No artistic skill required — learn how the act of creating can process trauma, reduce stress, and build self-awareness.',
+        features: [
+          { icon: '🖌️', text: 'Beginner-friendly exercises and prompts' },
+          { icon: '💡', text: 'Techniques for emotional expression and release' },
+          { icon: '🧘', text: 'Mindful art practices for everyday wellness' },
+          { icon: '🔗', text: 'Links to guided resources and tutorials' },
+        ]
+      },
+      writing: {
+        icon: '✍️',
+        title: 'Writing Therapy',
+        body: 'Put words to feelings — expressive writing and journaling are among the most accessible and evidence-backed wellness tools.',
+        features: [
+          { icon: '📓', text: 'Journaling prompts for emotional processing' },
+          { icon: '📝', text: 'Expressive writing techniques and frameworks' },
+          { icon: '💬', text: 'Narrative therapy and reframing your story' },
+          { icon: '📚', text: 'Recommended readings and writing resources' },
+        ]
+      }
+    };
+
+    function openModal(type) {
+      const c = content[type];
+      document.getElementById('modal-icon').textContent = c.icon;
+      document.getElementById('modal-title').textContent = c.title;
+      document.getElementById('modal-body').textContent = c.body;
+      const ul = document.getElementById('modal-features');
+      ul.innerHTML = c.features.map(f =>
+        `<li><span class="feat-icon">${f.icon}</span>${f.text}</li>`
+      ).join('');
+      // Reset icon animation
+      const iconEl = document.getElementById('modal-icon');
+      iconEl.style.animation = 'none';
+      void iconEl.offsetWidth;
+      iconEl.style.animation = '';
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+
+    function closeModalOnOverlay(e) {
+      if (e.target === document.getElementById('modal-overlay')) closeModal();
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // Floating particles
+    function createParticle() {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 10 + 5;
+      const colors = ['#52c99a','#7de0b5','#2dc98a','#a8edca','#b2f0d8'];
+      p.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random()*100}vw;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        animation-duration:${Math.random()*12+8}s;
+        animation-delay:${Math.random()*6}s;
+      `;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 20000);
+    }
+
+    // Spawn particles over time
+    for (let i = 0; i < 14; i++) setTimeout(createParticle, i * 600);
+    setInterval(createParticle, 1800);
+  </script>
 </body>
 </html>
