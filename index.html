@@ -4,6 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Brain Break – Coming Soon</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon_brainbreak.png" />
+  <link rel="apple-touch-icon" href="favicon_brainbreak.png" />
+
+  <!-- SEO & Social -->
+  <meta name="description" content="Brain Break — your guide to creative therapies through film, music, art, and writing. Practical guides and curated resources for mental wellness." />
+  <meta name="author" content="Andrew Davis" />
+  <meta property="og:title" content="Brain Break – Coming Soon" />
+  <meta property="og:description" content="Healing through film, music, art & writing. Guides and resources for creative therapies — coming soon." />
+  <meta property="og:url" content="https://trybrainbreak.com" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#a8edca" />
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
@@ -108,7 +121,6 @@
       animation-delay: -5s;
     }
 
-    /* Theme toggle */
     .theme-toggle {
       position: fixed;
       top: 1.2rem;
@@ -134,7 +146,6 @@
     .theme-toggle .toggle-icon { font-size: 1rem; transition: transform 0.4s ease; }
     .theme-toggle:hover .toggle-icon { transform: rotate(20deg); }
 
-    /* Particle */
     .particle {
       position: fixed;
       border-radius: 50%;
@@ -149,7 +160,6 @@
       90%  { opacity: 0.3; }
       100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
     }
-
     @keyframes blobDrift {
       0%   { transform: translate(0,0) scale(1); }
       100% { transform: translate(30px,20px) scale(1.08); }
@@ -171,9 +181,8 @@
       0%, 100% { transform: translateY(0px); }
       50%       { transform: translateY(-5px); }
     }
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(44,200,138,0.35); }
-      50%       { box-shadow: 0 0 0 10px rgba(44,200,138,0); }
+    @keyframes featSlide {
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .container {
@@ -235,6 +244,7 @@
       margin-bottom: 2.75rem;
     }
 
+    /* FIX: remove conflicting hover animation, handle everything with transition only */
     .topic-pill {
       background: var(--pill-bg);
       border: 1px solid var(--pill-border);
@@ -248,32 +258,41 @@
       gap: 0.4rem;
       backdrop-filter: blur(6px);
       cursor: pointer;
-      transition: background 0.25s, transform 0.2s, box-shadow 0.2s, color 0.4s, border-color 0.4s;
-      animation: popIn 0.5s ease both;
       position: relative;
       overflow: hidden;
+      /* Load animation */
+      opacity: 0;
+      animation: popIn 0.5s ease forwards;
+      /* Smooth hover transitions only — no animation property on hover */
+      transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.2s ease, color 0.4s, border-color 0.4s;
     }
+
+    .topic-pill:nth-child(1) { animation-delay: 0.45s; }
+    .topic-pill:nth-child(2) { animation-delay: 0.55s; }
+    .topic-pill:nth-child(3) { animation-delay: 0.65s; }
+    .topic-pill:nth-child(4) { animation-delay: 0.75s; }
+
+    /* Shimmer sweep pseudo-element */
     .topic-pill::after {
       content: '';
       position: absolute;
       inset: 0;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
       transform: translateX(-100%);
+      transition: none;
+      pointer-events: none;
     }
     .topic-pill:hover::after {
       transform: translateX(100%);
-      transition: transform 0.4s ease;
+      transition: transform 0.45s ease;
     }
-    .topic-pill:nth-child(1) { animation-delay: 0.45s; }
-    .topic-pill:nth-child(2) { animation-delay: 0.55s; }
-    .topic-pill:nth-child(3) { animation-delay: 0.65s; }
-    .topic-pill:nth-child(4) { animation-delay: 0.75s; }
+
     .topic-pill:hover {
       background: var(--pill-hover-bg);
       transform: translateY(-4px) scale(1.04);
-      box-shadow: 0 10px 28px rgba(30,120,80,0.18);
-      animation: pulse 1.5s ease infinite;
+      box-shadow: 0 10px 28px rgba(30,120,80,0.2);
     }
+
     .topic-pill .icon { font-size: 1.1rem; }
 
     /* Modal */
@@ -321,7 +340,6 @@
       margin-bottom: 0.75rem;
       transition: color 0.4s;
     }
-
     .modal p {
       font-size: 0.93rem;
       color: var(--modal-body);
@@ -329,7 +347,6 @@
       margin-bottom: 0.6rem;
       transition: color 0.4s;
     }
-
     .coming-tag {
       display: inline-block;
       background: var(--modal-tag-bg);
@@ -343,7 +360,6 @@
       margin-bottom: 1.3rem;
       transition: all 0.4s;
     }
-
     .modal-features {
       list-style: none;
       margin-bottom: 1.75rem;
@@ -360,21 +376,14 @@
       transition: color 0.4s;
       opacity: 0;
       transform: translateX(-8px);
-      animation: none;
     }
-    .modal-overlay.active .modal-features li {
-      animation: featSlide 0.35s ease forwards;
-    }
+    .modal-overlay.active .modal-features li { animation: featSlide 0.35s ease forwards; }
     .modal-features li:nth-child(1) { animation-delay: 0.25s; }
     .modal-features li:nth-child(2) { animation-delay: 0.35s; }
     .modal-features li:nth-child(3) { animation-delay: 0.45s; }
     .modal-features li:nth-child(4) { animation-delay: 0.55s; }
     .modal-features li:last-child { border-bottom: none; }
     .feat-icon { font-size: 1rem; }
-
-    @keyframes featSlide {
-      to { opacity: 1; transform: translateX(0); }
-    }
 
     .modal-close {
       background: linear-gradient(135deg, #2dc98a, #1a8c5e);
@@ -409,7 +418,7 @@
     }
     .footer-note a:hover { color: var(--text-main); border-color: var(--text-main); }
 
-    /* Tooltip on Colin Lee link */
+    /* Shared tooltip style */
     .credit-tooltip {
       position: relative;
       display: inline-block;
@@ -431,7 +440,7 @@
       letter-spacing: 0.03em;
     }
     [data-theme="dark"] .credit-tooltip .tip {
-      background: rgba(180,240,210,0.15);
+      background: rgba(180,240,210,0.12);
       color: #a8edca;
       border: 1px solid rgba(44,201,138,0.2);
     }
@@ -467,11 +476,19 @@
 
     <p class="footer-note">
       &copy; 2026 Brain Break &mdash; an original concept by
-      <a href="https://www.ua.edu" target="_blank" rel="noopener">Andrew Davis</a>, Alabama Student.<br>
-      Website designed &amp; built by Andrew Davis &amp;
+      <span class="credit-tooltip">
+        <a href="https://www.ua.edu" target="_blank" rel="noopener">Andrew Davis</a>
+        <span class="tip">Alabama Student &mdash; University of Alabama</span>
+      </span>.<br>
+      Website designed &amp; built by
+      <span class="credit-tooltip">
+        <a href="https://www.ua.edu" target="_blank" rel="noopener">Andrew Davis</a>
+        <span class="tip">Alabama Student &mdash; University of Alabama</span>
+      </span>
+      &amp;
       <span class="credit-tooltip">
         <a href="https://github.com/colinlee05" target="_blank" rel="noopener">Colin Lee</a>
-        <span class="tip">Web Developer — Baton Rouge, LA</span>
+        <span class="tip">Web Developer &mdash; Baton Rouge, LA</span>
       </span>
     </p>
   </div>
@@ -550,14 +567,11 @@
     function closeModal() {
       document.getElementById('modal-overlay').classList.remove('active');
     }
-
     function closeModalOnOverlay(e) {
       if (e.target === document.getElementById('modal-overlay')) closeModal();
     }
-
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    // Dark / Light toggle
     function toggleTheme() {
       const html = document.documentElement;
       const isDark = html.getAttribute('data-theme') === 'dark';
@@ -569,7 +583,6 @@
       updateParticleColors();
     }
 
-    // Floating particles
     const lightColors = ['#52c99a','#7de0b5','#2dc98a','#a8edca','#b2f0d8'];
     const darkColors  = ['#1a6645','#0f4a30','#2dc98a','#0d3d25','#1a8c5e'];
     let particleColors = lightColors;
